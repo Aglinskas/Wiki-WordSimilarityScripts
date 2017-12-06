@@ -1,3 +1,4 @@
+
 clear
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Script to load wiki within sentence co-occurance counts
@@ -7,6 +8,7 @@ clear
 % dimension-specifc siliarity spaces (Josine) and smart, sensitive heiratchical
 % clustering (Aidas)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% boleans to impliment differnt pre-processing
 enableFeaureSelect=false; % specify subset of features via 'keepWords'
 corr32=true; % create 32 different DSMs then average t eh r values
@@ -17,9 +19,11 @@ rescaleFeaturebyFrequecy=true; %scale e.g. 'the verb to be' so that is does not 
 % minThresh=25; has been hardcoded here. I prefer to soft code if we will
 % be lokking at different feautres spaces etc (and in general). BUT, 25 for
 % now
+
 %% todo
 % double check the feature labels are correct. I supsect some quick fixes we
 % implimented that look bad but actually work -slf
+
 %% loading words from text files - this cannot really change
 
 topVerb=getVerb;
@@ -144,9 +148,9 @@ if length(nanind)>0
     label(nanind)=[];
 end
 
-
 figure
 cc=0;for ii=1:size(dendro,1);for jj=ii+1:size(dendro,2),cc=cc+1;Y(cc)=dendro(ii,jj);end;end
 Z=linkage(1-Y, 'ward');%,{'correlation'} )
 [H,T,OUTPERM] =dendrogram(Z,length(label),'Labels',label','Colorthresh',1.5);
 pause(.1)
+save('/Users/aidasaglinskas/Desktop/OUTPERM_SLF.mat','OUTPERM')
