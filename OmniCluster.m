@@ -131,28 +131,27 @@ if corr32
    wiki.dmCorr(:,:,drop_nouns) = [];
    wiki.dm_avg(drop_nouns,:) = [];
 else
-    label(sum(dendro,2)<minThresh)=[];
-    dendro(sum(dendro,2)<minThresh,:)=[];
+    label(sum(wiki.dm_avg,2)<minThresh)=[];
+    wiki.dm_avg(sum(wiki.dm_avg,2)<minThresh,:)=[];
 end
 
 if logAtAll  &~corr32
-    dendro=log(dendro+1);
+    wiki.dm_avg=log(wiki.dm_avg+1);
 end
 
 if rescaleFeaturebyFrequecy &~corr32
-    dendro2=dendro./(repmat(mean(dendro),size(dendro,1),1));
-    dm_dendro=[(dendro)+(dendro2)]/2;
-    dendro=[corr(dendro')+corr(dendro2')]/2;
+    wiki.dm_avg2=wiki.dm_avg./(repmat(mean(wiki.dm_avg),size(wiki.dm_avg,1),1));
+    dm_wiki.dm_avg=[(wiki.dm_avg)+(wiki.dm_avg2)]/2;
+    wiki.dm_avg=[corr(wiki.dm_avg')+corr(wiki.dm_avg2')]/2;
 end
 %% should not be necessary
-nanind=find(isnan(dendro(1,:)));
+nanind=find(isnan(wiki.dm_avg(1,:)));
 if length(nanind)>0
     warning('manually stripping nans')
-    dendro(:,nanind)=[];
-    dendro(nanind,:)=[];
+    wiki.dm_avg(:,nanind)=[];
+    wiki.dm_avg(nanind,:)=[];
     label(nanind)=[];
 end
-
 %%
 figure(1)
 Y = get_triu(wiki.dmCorr_avg);
