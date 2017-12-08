@@ -14,4 +14,3 @@ w2 = get_triu(wiki.dmCorr_avg(words_ind{2},words_ind{2}));
 a = mean(mean(wiki.dmCorr_avg(words_ind{2},words_ind{1})));
 
 measure = mean([w1 w2]) ./ a;
-

@@ -72,7 +72,7 @@ for ii=1:length(featWords)
     end
 end
 featWords(featKill)=[];
-%% select features
+%% Restrict features
 if enableFeaureSelect
 keepWords={'red-a','blue-a','green-a'}
 keepInd=[];
@@ -163,3 +163,5 @@ nclust = length(unique(arrayfun(@(x) num2str(H(x).Color),1:length(H),'UniformOut
 wiki.noun_ord = OUTPERM(end:-1:1);
 xtickangle(45)
 pause(.1)
+
+clear Y absScore absWord dm dmAll dmCorr featWords label MRCnoun 

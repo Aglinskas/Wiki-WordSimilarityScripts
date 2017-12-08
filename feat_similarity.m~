@@ -16,8 +16,10 @@ wiki.feat_clust = featClust; featClust = [];
 
 ind = find(strcmp(wiki.nouns,'red-n'));
 ind = find(strcmp(wiki.nouns,'green-a'))
+
 wiki.noun_clust(ind)
 clust_ind = wiki.feat_clust(ind);
+
 %sort(wiki.featwords(find(wiki.feat_clust == clust_ind)))
 [Y I] = sort(wiki.dm_feat_avg(ind,:),'descend');
 temp = wiki.featwords(I);
