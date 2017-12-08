@@ -6,7 +6,7 @@ clear
 % this goal is to decide on nice stable paramaters to take to feature based
 % dimension-specifc siliarity spaces (Josine) and smart, sensitive heiratchical
 % clustering (Aidas)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%a%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% boleans to impliment differnt pre-processing
 enableFeaureSelect=false; % specify subset of features via 'keepWords'
 corr32=true; % create 32 different DSMs then average t eh r values
@@ -152,7 +152,7 @@ if length(nanind)>0
     wiki.dm_avg(nanind,:)=[];
     label(nanind)=[];
 end
-%%
+%% Plot the figure
 figure(1)
 Y = get_triu(wiki.dmCorr_avg);
 Z=linkage(1-Y, 'ward');%,{'correlation'} )
