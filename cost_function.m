@@ -1,6 +1,6 @@
 function measure = cost_function(wiki)
-words{1} = {'cat-n' 'dog-n'};
-words{2} = {'truck-n' 'car-n'};
+words{1} = {'cat-n' 'dog-n' 'cow-n'};
+words{2} = {'truck-n' 'car-n' 'motor-n'};
 
 %t_word = words{4};
 %find(strcmp(wiki.nouns,t_word))

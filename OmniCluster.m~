@@ -31,7 +31,7 @@ topVerb = cellfun(@(x) [x '-v'],topVerb,'UniformOutput',0);
 topNouns = cellfun(@(x) [x '-n'],topNouns,'UniformOutput',0);
 topAdjs = cellfun(@(x) [x '-a'],topAdjs,'UniformOutput',0);
 
-featWords = [topVerb topAdjs topNouns];
+featWords = [topVerb topNouns topAdjs];
 
 % featWords=[];
 % for ii=1:length(topVerb)
@@ -59,11 +59,10 @@ end
 load absFreq8435features
 clc
 freqThresh=500;
-%marked = {};
 for ii=length(featWords):-1:1  
     if absScore(find(strcmp(featWords{ii},absWord)))<freqThresh
-        featWords(ii)=[];
-        % marked{end+1} = featWords{ii};
+        %featWords(ii)=[];
+         disp(featWords(ii))
     end
 end
 %[Y I] = sort(absScore,'descend');absWord(I(1:50))'; 
@@ -174,7 +173,7 @@ nclust = length(unique(arrayfun(@(x) num2str(H(x).Color),1:length(H),'UniformOut
 wiki.noun_ord = OUTPERM(end:-1:1);
 xtickangle(45)
 pause(.1)
-%clear Y absScore absWord dm dmAll dmCorr featWords label MRCnoun 
+clear Y absScore absWord dm dmAll dmCorr featWords label MRCnoun 
 %% 
 clc;tic;
 save('/Users/aidasaglinskas/Desktop/wiki.mat','wiki','-v7.3');
