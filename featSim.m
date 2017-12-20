@@ -26,7 +26,7 @@ tic;[h x clust] = dendrogram(Z,nclust,'labels',wiki.featwords,'ColorThreshold',2
 wiki.feat_ord = perm;
 wiki.feat_clust = x;
 %%
-targ_word = 'black-a';
+targ_word = 'brown-a';
 targ_ind = find(strcmp(wiki.featwords,targ_word));
 wiki.featwords(wiki.feat_clust==wiki.feat_clust(targ_ind))
 %%
