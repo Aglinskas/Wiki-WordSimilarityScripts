@@ -175,7 +175,4 @@ wiki.noun_ord = OUTPERM(end:-1:1);
 xtickangle(45)
 pause(.1)
 %clear Y absScore absWord dm dmAll dmCorr featWords label MRCnoun 
-%% 
-clc;tic;
-save('/Users/aidasaglinskas/Desktop/wiki.mat','wiki','-v7.3');
-toc
+%

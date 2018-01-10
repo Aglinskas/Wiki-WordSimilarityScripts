@@ -9,14 +9,13 @@ for i = 1:size(wiki.dm,1)
   wiki.featSim(i,:,:) = corr(squeeze(wiki.dm(i,:,:)));
 end
 wiki.avgfeatSim = corr(squeeze(mean(wiki.dm,1)));
-%% Compute Mean
+%%
+d = pdist(squeeze(mean(wiki.dm,1))','correlation');
+wiki.avgfeatSim = squareform(d);
+size(wiki.avgfeatSim)
+%%
 tic;
-wiki.avgfeatSim = squeeze(mean(wiki.featSim,1))
-toc
-%% Drop the huge on
-wiki.featSim = '[] - bigass matrix dropped';
-tic;
-Z = linkage(1-get_triu(wiki.avgfeatSim),'ward');
+Z = linkage(get_triu(wiki.avgfeatSim),'ward');
 toc;
 %%
 tic;[h x perm] = dendrogram(Z,0,'labels',wiki.featwords,'ColorThreshold',1);toc;
@@ -26,9 +25,16 @@ tic;[h x clust] = dendrogram(Z,nclust,'labels',wiki.featwords,'ColorThreshold',2
 wiki.feat_ord = perm;
 wiki.feat_clust = x;
 %%
-targ_word = 'brown-a';
+targ_word = 'red-a';
 targ_ind = find(strcmp(wiki.featwords,targ_word));
-wiki.featwords(wiki.feat_clust==wiki.feat_clust(targ_ind))
+clust_targ_inds = find(wiki.feat_clust==wiki.feat_clust(targ_ind));
+wiki.featwords(clust_targ_inds)
 %%
+redmat = wiki.avgfeatSim(clust_targ_inds,clust_targ_inds);
+redmat = redmat ./ max(max(redmat))
+redmat_lbls = wiki.featwords(clust_targ_inds);
+clf;add_numbers_to_mat(redmat,redmat_lbls)
+
+add_numbers_to_mat(mean(-redmat)',redmat_lbls)
 
 

@@ -9,8 +9,8 @@
 %List_itemsXcategory_26ago16;
 %A=vegetables;
 
-A={'red', 'green','blue'};
-A=unique([A {'black'    'blue'    'brown'    'dark'    'green'    'red'  'magenta'  'white'    'yellow' 'pink' 'gray' 'grey'}])
+A={'pizza' 'pasta' ''};
+%A=unique([A {'black'    'blue'    'brown'    'dark'    'green'    'red'  'magenta'  'white'    'yellow' 'pink' 'gray' 'grey'}])
 word=[];
 % if ~exist('done')
 done=zeros(1,length(A));
@@ -57,8 +57,7 @@ while true
         break
     end
 end
-%%
-
+%% 
 figure(1)
 uWord=unique(word);
 
