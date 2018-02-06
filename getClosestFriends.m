@@ -9,7 +9,7 @@
 %List_itemsXcategory_26ago16;
 %A=vegetables;
 
-A={'pizza' 'pasta' ''};
+A={'slow' 'fast' 'speed' 'moving' 'motion'};
 %A=unique([A {'black'    'blue'    'brown'    'dark'    'green'    'red'  'magenta'  'white'    'yellow' 'pink' 'gray' 'grey'}])
 word=[];
 % if ~exist('done')
@@ -83,3 +83,5 @@ dx=.1;
 text(1:length(srtScore)+dx, srtScore+dy, upper(srtWord))
 uWord(ind(1:sum(score>3)))
 clc;disp('all done')
+
+%%

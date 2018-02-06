@@ -46,7 +46,7 @@ featWords = [topVerb topAdjs topNouns];
 %
 
 % cellfun(@length,{topVerb topAdjs topNouns}) % number of V A N
-MRCnoun=getMRCNoun;
+MRCnoun=getMRCNoun; % MRC database
 MRCnoun = cellfun(@(x) [x '-n'],MRCnoun,'UniformOutput',0);
 % for ii=1:length(MRCnoun)
 %     MRCnoun{ii}=[MRCnoun{ii} '-n'];
@@ -122,14 +122,16 @@ label=getMRCNoun;
 %dendro=squeeze(mean(dmAll)); % get an data matrix average
 wiki.dm_avg = squeeze(mean(wiki.dm));
 % remove infrequent features
-minThresh_targs=25;
-minThresh_feats=400;
+minThresh_targs=25; %Reduce targets
+minThresh_feats=25; % Reduce features
 
 
 low_freq_inds = find(sum(wiki.dm_avg,1)<minThresh_feats);
     wiki.dm_avg(:,low_freq_inds)=[];
     wiki.featwords(low_freq_inds) = [];
     wiki.dm(:,:,low_freq_inds) = [];
+    
+    
     
 if corr32
    wiki.dmCorr_avg=squeeze(nanmean(wiki.dmCorr));
@@ -145,11 +147,9 @@ else
     label(sum(wiki.dm_avg,2)<minThresh_targs)=[];
     wiki.dm_avg(sum(wiki.dm_avg,2)<minThresh_targs,:)=[];
 end
-
 if logAtAll  &~corr32
     wiki.dm_avg=log(wiki.dm_avg+1);
 end
-
 if rescaleFeaturebyFrequecy &~corr32
     wiki.dm_avg2=wiki.dm_avg./(repmat(mean(wiki.dm_avg),size(wiki.dm_avg,1),1));
     dm_wiki.dm_avg=[(wiki.dm_avg)+(wiki.dm_avg2)]/2;
@@ -175,4 +175,3 @@ wiki.noun_ord = OUTPERM(end:-1:1);
 xtickangle(45)
 pause(.1)
 %clear Y absScore absWord dm dmAll dmCorr featWords label MRCnoun 
-%
