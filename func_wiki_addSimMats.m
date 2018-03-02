@@ -24,6 +24,7 @@ wiki.sim_feat = corr(wiki.dm_avg');
 %% Cluster
 mats = {wiki.dm_avg wiki.dm_avg'};
 lbls = {wiki.nouns wiki.featwords};
+ttls = {'Noun Clustering' 'Feature Clustering'}
 for w_mat = 1:2;
     figure(w_mat);
 d = pdist(mats{w_mat},'correlation');
@@ -44,5 +45,7 @@ n_clust = length(unique(cellfun(@num2str,{h{w_mat}.Color},'UniformOutput',0)));
         wiki.feat_clust = clust{w_mat};
         wiki.feat_ord = perm{w_mat}';
     end
+figure(w_mat);
+title({ttls{w_mat} ['n-clust ' num2str(n_clust) ', n-items ' num2str(size(wiki.dm_avg,1)) ', thresh ' num2str(thresh(w_mat))]},'fontsize',20)
 end
 toc
