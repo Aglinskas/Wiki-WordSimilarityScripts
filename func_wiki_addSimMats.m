@@ -18,8 +18,8 @@ tic
 do_plot = logical(1);
 warning('off','stats:linkage:NotEuclideanMatrix');
 %% Run Similarity
-wiki.sim_noun = corr(wiki.dm_avg);
-wiki.sim_feat = corr(wiki.dm_avg');
+wiki.sim_feat = corr(wiki.dm_avg);
+wiki.sim_noun = corr(wiki.dm_avg');
 %clc;disp(wiki)
 %% Cluster
 mats = {wiki.dm_avg wiki.dm_avg'};
