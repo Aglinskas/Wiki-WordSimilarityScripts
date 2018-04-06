@@ -37,11 +37,9 @@ target_clusters = l(clust_idx);
     yticklabels(wiki.nouns(wiki.noun_ord));
     title('Full Similarity Matrix','fontsize',24);end
 
-% Finds items belonging to target clusters
+% Finds items 
 w = ismember(wiki.noun_clust,target_clusters);
  
-
-% loops through clusters
 c = struct;
 for ii = 1:length(target_clusters);
 i = target_clusters(ii);
@@ -50,13 +48,11 @@ c(ii).clust_elements_inds = find(wiki.noun_clust==i)';
 c(ii).clust_elements_str = wiki.nouns(c(ii).clust_elements_inds)';
 c(ii).clust_elements_str = strrep(c(ii).clust_elements_str,'-n',['-' num2str(i)]);
 end
-% c has clusters and elements selected 
+
 c_raw = c;
 c = refine_clusters(c_raw,wiki,keep_elements);
-% refine_clusters selects only #keep_elements number of best behaving items
-% from a cluster
 
-% final matrix with n_groups and keep_elements per group
+
 mat = wiki.sim_noun([c.clust_elements_inds],[c.clust_elements_inds]);
 
 % Draw The matrix
