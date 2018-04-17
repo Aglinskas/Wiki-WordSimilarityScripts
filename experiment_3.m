@@ -5,9 +5,10 @@ cd /Users/aidasaglinskas/Desktop/Wiki-wordSimilarityScripts/
 %wiki = func_wiki_addSimMats(wiki_proper,[1.5 2])
 wiki = func_wiki_addSimMats()
 % ^ takes around 2 minutes to compute, returns wiki structure
+clc;disp('Ready')
 %% Then This
 clc;disp(wiki);
-n_groups = 10; % how many groups
+n_groups = 16; % how many groups
 keep_elements = 8; % how many elements per group
 
 %%% self sufficient code below
@@ -41,6 +42,8 @@ target_clusters = l(clust_idx);
 w = ismember(wiki.noun_clust,target_clusters);
  
 
+
+
 % loops through clusters
 c = struct;
 for ii = 1:length(target_clusters);
@@ -59,8 +62,16 @@ c = refine_clusters(c_raw,wiki,keep_elements);
 % final matrix with n_groups and keep_elements per group
 mat = wiki.sim_noun([c.clust_elements_inds],[c.clust_elements_inds]);
 
+% figure out figure handle
+if exist('f_pass') ~= 1
+figs.list_of_figs = get(0,'children')
+figs.fig_ind = min(find(~ismember(1:100,[figs.list_of_figs.Number]))); 
+f_pass = 1
+end
+% ^ find smallest unused figure number
+
 % Draw The matrix
-    f = figure(1);
+    f = figure(figs.fig_ind);
     imagesc(mat);
         f.CurrentAxes.CLim = [min(get_triu(mat)) max(get_triu(mat))];
         f.CurrentAxes.XTick = 1:length(mat);

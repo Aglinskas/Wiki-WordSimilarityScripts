@@ -30,7 +30,7 @@ for c_ind = 1:length(c)
    
    c(c_ind).clust_elements_inds = take_inds;
    c(c_ind).clust_elements_str = wiki.nouns(take_inds)';
-   c(c_ind).clust_elements_str = strrep(c(c_ind).clust_elements_str,'-n',['-' num2str(c(c_ind).clust_ind)])
+   %c(c_ind).clust_elements_str = strrep(c(c_ind).clust_elements_str,'-n',['-' num2str(c(c_ind).clust_ind)])
    
 %    c(c_ind).clust_elements_inds = c(c_ind).clust_elements_inds(1:keep_elements);
 %    c(c_ind).clust_elements_str = c(c_ind).clust_elements_str(1:keep_elements);

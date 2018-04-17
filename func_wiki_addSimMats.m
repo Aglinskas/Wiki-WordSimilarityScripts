@@ -3,7 +3,7 @@ function wiki = func_wiki_addSimMats(varargin)
 tic
     if nargin == 0
         warning('on');warning('no input, loading cached wiki')
-        load('/Users/aidasaglinskas/Desktop/Wiki-wordSimilarityScripts/Jwiki.mat')
+        load('Jwiki.mat')
         pause(1)
         thresh = [1 1];
     elseif nargin == 1
@@ -17,6 +17,11 @@ tic
     end
 do_plot = logical(1);
 warning('off','stats:linkage:NotEuclideanMatrix');
+%wiki.nouns(I(1:50));wiki.nouns(I(end:-1:end-10))
+%[Y I] = sort(mean(wiki.dm_avg,1),'descend')
+%wiki.featwords(I(1:50));wiki.featwords(I(end:-1:end-10))
+wiki.dm_avg = wiki.dm_avg + .0001;
+wiki.dm_avg = log(wiki.dm_avg);
 %% Run Similarity
 wiki.sim_feat = corr(wiki.dm_avg);
 wiki.sim_noun = corr(wiki.dm_avg');
