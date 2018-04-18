@@ -31,57 +31,66 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 warning('off','stats:linkage:NotEuclideanMatrix');
 warning('off','stats:linkage:NotEuclideanMethod')
-clear all; close all;clc
-%% 
-load workingNouns
-targWords = word;
-dimWords = dm_verb;
 
-% %% 1. Load data
-% matrixFolder = 'DataMatrices/';
-% dimWordType = 'Adjs';
-% creatingDate = '23-Mar-2016'
+clear all
+close all
+%% 
+% load workingNouns
+% targWords = word;
+% dimWords = dm_verb;
+
+%% 1. Load data
+matrixFolder = 'DataMatrices/';
+creatingDate = '07-Apr-2016'
+dmName = 'dm_EN-wform.w.2.ppmi.svd.500.txt.wordlist_mrc_CONC.mat';
+% dm_EN-wform.w.2.ppmi.wordlist_mrc_CONC_topVerbs'
+% savedmName = [matrixFolder dmName '.mat'];
+% 'dm_EN-wform.w.5.cbow.neg10.400.subsmpl.txt.wordlist_mrc_CONC.mat';
+% 
+savedmName = [matrixFolder 'reducedDM_' dmName '-' creatingDate '.mat'];
+
+% dimWordType = 'AV-COMB';%'Adjs';'Verbs';%
 % savedmName = [matrixFolder 'reducedDM_selTargNoun_fromTop' dimWordType '-' creatingDate '.mat'];
-% data = load(savedmName);
-% fieldname = fieldnames(data);
-% dm = data.(fieldname{1});
-% %%%%%target words for rows and columns
-% targWordFile = [matrixFolder 'selTargNoun_fromTop' dimWordType '-' creatingDate];
-% fid = fopen(targWordFile,'r');
-% targWords = textscan(fid,'%s');
+data = load(savedmName);
+fieldname = fieldnames(data);
+dm = data.(fieldname{1});
+% dimWords = data.sel_dimWords;
+targWords = data.sel_targWords;
+%%
+% fid = fopen([matrixFolder 'wordlist_mrc_CONC']);
+% strings = textscan(fid,'%s','Delimiter','\n');
 % fclose(fid);
-% targWords = targWords{1};
-% %%%%%%%
-% targWordFile = [matrixFolder 'selTop' dimWordType '400-' creatingDate];
-% fid = fopen(targWordFile,'r');
-% dimWords = textscan(fid,'%s');
-% fclose(fid);
-% dimWords = dimWords{1};
+% strings = strings{1}
+% targWords = cell(length(strings),1);
+% for i = 1:length(strings)
+%     str = strsplit(strings{i});
+%     targWords{i} = str{1};
+% end
 
 %% 2. Check the initial dengrogram, which can give a fair estimate of the
 % natural clustering
-Y = pdist(dm_verb,'correlation');
-figure();imagesc(squareform(Y));colorbar();
+Y = pdist(dm,'correlation');
+% figure();imagesc(squareform(Y));colorbar();
 Z = linkage(Y, 'ward');
 % clustering all 
 figure();
-[H,T] = dendrogram(Z,size(dm_verb,1),'Labels',targWords,...
+[H,T] = dendrogram(Z,size(dm,1),'Labels',targWords,...
     'Orientation','left','ColorThreshold',1.4 );
-title('COMPLETE')
-figure
-%hc_plotFlatClusters(dm_verb,targWords,31,1.4)
-hc_plotFlatClusters(dm_verb,targWords,1.4)
-% hc_plotFlatClusters(plotdm,plotlbls,dendroThrs,hcMetric
+hc_plotFlatClusters(dm,targWords,1.4)
 % E.G. Use a threshold
-% woringNouns: 1.6:22 1.5:14, 1.4:31, 1.2:51
-disThrs = 1.6;
+disThrs = 1.8;
 T = cluster(Z,'cutoff',disThrs,'criterion','distance');
 n_clusters = max(T)
+% T = cluster(Z,'maxclust',30);
 % Then check the cluster sizes
 sizes = [];
-for ic = 1:n_clusters
+for ic = 1:max(T)
     sizes(ic) = length(find(T==ic));
-    fprintf('Cluster %d has %d items\n',ic,sizes(ic));
+    fprintf('\nCluster %d has %d items\n',ic,sizes(ic));
+    words = targWords(find(T==ic));
+    for iw = 1:length(words)
+       fprintf([words{iw} ' ']);
+    end
 end
 mean(sizes)
 median(sizes)
@@ -90,17 +99,19 @@ median(sizes)
 %% 3. Main loop
 % SPECIFY A RANGE
 close all;
-range_n_clusters = [4 8 15];
+eliminateFunc =  'elementwise';% 'negSil'; %
+range_n_clusters = [3,6,10];%,16,20];%      [4, 6, 12, 16];%, 20];%[4 8 16];
 % MAY CHANGE ACCORDING TO n_clusters
 min_cluster_size = 1; %
-range_max_cluster_size = [60,20,10 ];% [80 25 10 5]; % AKA minItems
-% SET TO 1000 FOR ALL IF TERMINATE IF NO MORE SAMPLES GET REMOVED
-range_n_iterations = [20 20 50  ];%linspace(1000,1000,length(range_n_clusters));% % AKA iterationsPerLevel
-
+range_max_cluster_size = [100,50,25,12,8];%[120 60 25 12 8]; %%  AKA minItems
+% SET TO 1000 FOR TERMINATE IF NO MORE SAMPLES GET REMOVED
+range_n_iterations = linspace(1000,1000,length(range_n_clusters));% [50 50 50 50,50];%  AKA iterationsPerLevel
+% 
 showDeletedItems = 0; %IF PRINT THE DETAILS OR NOT
 clear loopDMs loopRemainedTargWords copScores silScores
-inloopDM = dm_verb; %The same dense matrix going through the recursion
-inloopTargWords = word;
+inloopDM = dm; %The same dense matrix going through the recursion
+inloopTargWords = targWords;
+
 for i_clusters = 1:length(range_n_clusters)
     n_clusters = range_n_clusters(i_clusters);
     n_iterations = range_n_iterations(i_clusters);
@@ -111,19 +122,25 @@ for i_clusters = 1:length(range_n_clusters)
        [loopDMs{i_clusters}, loopRemainedTargWords{i_clusters},...
         copScores{i_clusters}, silScores{i_clusters}] = ...
             hc_eliminateSamples_recursion(inloopDM, inloopTargWords, n_iterations,...
-            n_clusters,'negSil',max_cluster_size, min_cluster_size, showDeletedItems, 0);
+            n_clusters,eliminateFunc,max_cluster_size, min_cluster_size, showDeletedItems, 0);
         inloopDM = loopDMs{i_clusters}{length(loopDMs{i_clusters})}; %Use the last dm in next loop
         inloopTargWords = loopRemainedTargWords{i_clusters}{length(loopDMs{i_clusters})};
         fprintf('Final dm size %d %d\n',size(inloopDM));
+%         
+%         fprintf('IMPOSE SECOND ORDER WITHIN-CLUSTER CORR ENHANCEMENT\n');
+%         tZ = linkage(inloopDM,'ward','correlation');
+%         tT = cluster(tZ,'maxclust',n_clusters);
+%         [inloopDM, inloopTargWords] = hc_corr2order(inloopDM,inloopTargWords,tT);
+%         fprintf('Final dm size %d %d\n',size(inloopDM));
     catch ME
         if strcmp(ME.identifier,'stats:linkage:TooFewDistances');
-            fprintf('Iteration stopped at %d level with %d iteration times\n',i_iteration,n_iterations)
+            fprintf('Iteration stopped at %d level with %d iteration times because too many items are removed\n',n_iterations,n_iterations)
         else
             disp(ME.identifier);
         end
      end
 end
-
+%%
 %DATA STRUCTURE
 % loopDMs{i}{j};%: reduced dense matrix using i-th choice of iterations and of the j-th iteration
 % THUS the last dense matrix of i-th choice of range_n_iterations is
@@ -131,21 +148,18 @@ end
 %The same for the others
 % HOWEVER IF THE ITERATION TERMINATED EARLY, THE LAST MATRIX IS length(loopDMs{x})
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-x = numel(loopDMs);
+x = 3;
 j = length(loopDMs{x});
 loopDM = loopDMs{x}{j};
 % disp(size(loopDM));
 loopLbls = loopRemainedTargWords{x}{j};
 %hc_plotDM(loopDM,loopLbls);
-
 target_n_clusters = range_n_clusters(x);
-[sorted_tw2 sorted_tw] = hc_plotFlatClusters(loopDM,loopLbls,target_n_clusters);
+[sortedRowId,sorted_tw] = hc_plotFlatClusters(loopDM,loopLbls,1.);
 % RETURN THE ORDERED LABLES AS IN THE DENDROGRAM, CAN CHECK IT ROUGHLY,
-% E.G.
-disp(sorted_tw(1:10));
-disp(sorted_tw(10:20));
+% E.G.disp(sorted_tw(1:10));disp(sorted_tw(10:20));
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Check what the items are
+%% Check what the items are
 Z = linkage(loopDM, 'ward','correlation');
 T = cluster(Z,'maxclust',target_n_clusters);
 % OR PLOT DENDROGRAM
@@ -157,18 +171,23 @@ for ic = 1:target_n_clusters
        fprintf([words{iw} ' ']);
     end
 end
-
+figure();silhouette(loopDM,T);%title(['Level' num2str(x)]);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ENFORCE WITHIN-CLUSTER CORRELATION
+[bt_dm,bt_lbls] = helper_corr2order(loopDM,loopLbls,T);
+size(bt_dm)
+[bt_sortedRowId,bt_sorted_tw] = hc_plotFlatClusters(bt_dm,bt_lbls,1.);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % OR PRINT THE ORDERED LABLES AS IN THE DENDROGRAM
 sorted_tw = wrev(sorted_tw);
 for i = 1:length(sorted_tw)
     disp(sorted_tw{i});
-    %disp(sorted_tw(i));
 end
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Check silhouette
+%% Check silhouette
 figure();
-[S SH] = silhouette(loopDM,T,'correlation');
+[S SH] = silhouette(loopDM,T,'correlation');title(['Level' num2str(level)]);
 
 silCluster = {}; %The sil scores of items in each cluster
 grandavgSil = [];
@@ -182,3 +201,5 @@ for iCluster = 1:range_n_clusters(x)
 end
 fprintf('Overall silhouette width = %f +/- %f\n',...
     mean(grandavgSil),std(grandavgSil));
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

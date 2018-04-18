@@ -31,13 +31,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 warning('off','stats:linkage:NotEuclideanMatrix');
 warning('off','stats:linkage:NotEuclideanMethod')
-clear all; close all;clc
+
+clear all
 %% 
 load workingNouns
 targWords = word;
 dimWords = dm_verb;
 
-% %% 1. Load data
+%% 1. Load data
 % matrixFolder = 'DataMatrices/';
 % dimWordType = 'Adjs';
 % creatingDate = '23-Mar-2016'
@@ -68,10 +69,7 @@ figure();
 [H,T] = dendrogram(Z,size(dm_verb,1),'Labels',targWords,...
     'Orientation','left','ColorThreshold',1.4 );
 title('COMPLETE')
-figure
-%hc_plotFlatClusters(dm_verb,targWords,31,1.4)
-hc_plotFlatClusters(dm_verb,targWords,1.4)
-% hc_plotFlatClusters(plotdm,plotlbls,dendroThrs,hcMetric
+hc_plotFlatClusters(dm_verb,targWords,31,1.4)
 % E.G. Use a threshold
 % woringNouns: 1.6:22 1.5:14, 1.4:31, 1.2:51
 disThrs = 1.6;
@@ -111,7 +109,7 @@ for i_clusters = 1:length(range_n_clusters)
        [loopDMs{i_clusters}, loopRemainedTargWords{i_clusters},...
         copScores{i_clusters}, silScores{i_clusters}] = ...
             hc_eliminateSamples_recursion(inloopDM, inloopTargWords, n_iterations,...
-            n_clusters,'negSil',max_cluster_size, min_cluster_size, showDeletedItems, 0);
+            n_clusters,max_cluster_size, min_cluster_size, showDeletedItems, 0);
         inloopDM = loopDMs{i_clusters}{length(loopDMs{i_clusters})}; %Use the last dm in next loop
         inloopTargWords = loopRemainedTargWords{i_clusters}{length(loopDMs{i_clusters})};
         fprintf('Final dm size %d %d\n',size(inloopDM));
@@ -139,7 +137,7 @@ loopLbls = loopRemainedTargWords{x}{j};
 %hc_plotDM(loopDM,loopLbls);
 
 target_n_clusters = range_n_clusters(x);
-[sorted_tw2 sorted_tw] = hc_plotFlatClusters(loopDM,loopLbls,target_n_clusters);
+sorted_tw = hc_plotFlatClusters(loopDM,loopLbls,target_n_clusters);
 % RETURN THE ORDERED LABLES AS IN THE DENDROGRAM, CAN CHECK IT ROUGHLY,
 % E.G.
 disp(sorted_tw(1:10));
@@ -162,7 +160,6 @@ end
 sorted_tw = wrev(sorted_tw);
 for i = 1:length(sorted_tw)
     disp(sorted_tw{i});
-    %disp(sorted_tw(i));
 end
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,3 +179,5 @@ for iCluster = 1:range_n_clusters(x)
 end
 fprintf('Overall silhouette width = %f +/- %f\n',...
     mean(grandavgSil),std(grandavgSil));
+
+
