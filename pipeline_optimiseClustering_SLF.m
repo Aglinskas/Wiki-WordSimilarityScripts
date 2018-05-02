@@ -146,8 +146,14 @@ disp(sorted_tw(1:10));
 disp(sorted_tw(10:20));
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check what the items are
+Y = pdist(loopDM,'correlation');
 Z = linkage(loopDM, 'ward','correlation');
 T = cluster(Z,'maxclust',target_n_clusters);
+[Z_atlas distmat] = get_Z_atlas(Z);
+ord = optimalleaforder(Z,Y);
+imagesc(distmat(ord,ord));
+xticks(1:length(distmat));xticklabels(loopLbls(ord))
+yticks(1:length(distmat));yticklabels(loopLbls(ord))
 % OR PLOT DENDROGRAM
 % [H T sortedRowIds] = dendrogram(Z,size(loopDM,1),'Labels',loopLbls,'Orientation','left','ColorThreshold',1.);
 for ic = 1:target_n_clusters

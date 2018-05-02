@@ -1,0 +1,60 @@
+function [cursT colleg]= query_MRCDB(input_list)
+% function [cursT colleg]= query_MRCDB(input_list)
+% input list of strings
+dbfile = './mrcDB/mrc2.db';
+conn = sqlite(dbfile);
+%%
+
+colnames = { 'wid' 'nlet' 'nphon' 'nsyl' 'kf_freq' 'kf_ncats' 'kf_nsamp' 'tl_freq' 'brown_freq' 'fam' 'conc' 'imag' 'meanc' 'meanp' 'aoa' 'tq2' 'wtype' 'pdwtype' 'alphasyl' 'status' 'var' 'cap' 'irreg' 'word' 'phon' 'dphon' 'stress'};
+for i = 1:length(input_list)
+input_word = input_list{i};
+
+sqlquery_temp = 'SELECT * FROM word WHERE word = ''%s''';
+sqlquery = sprintf(sqlquery_temp,upper(input_word));
+rowlimit = 1000;
+curs = fetch(conn,sqlquery,rowlimit);
+
+cursI = cell2table(curs,'VariableNames',colnames);
+if i==1
+    cursT = cursI;
+else
+    cursT = [cursT;cursI];
+end
+end
+
+cursT = cursT(strcmp(cursT.wtype,'N'),:) % only keep the nouns 
+
+% Validation, if words don't match, throw an error
+if ~all(arrayfun(@(x) strcmp(upper(input_list{x}),cursT.word{x}),1:length(input_list)))
+    disp(arrayfun(@(x) sprintf('Query: %s, entry: %s',upper(input_list{x}),cursT.word{x}),1:length(input_list),'UniformOutput',0)')
+    error('word mismatch')
+end
+%%
+close(conn)
+colleg = {'word id (row in the database)'
+'number of letters in word'
+'number of phonemes in word'
+'number of syllables in word'
+'Kucera and Francis written frequency'
+'Kucera and Francis number of categories'
+'K&F number of samples'
+'Thorndike-Lorge frequency'
+'Brown verbal frequency'
+'Familiarity'
+'Concreteness'
+'Imagery'
+'Mean Colerado Meaningfulness'
+'Mean Pavio Meaningfulness'
+'Age of Acquisition'
+'Type'
+'Part of speech'
+'PD Part of speech'
+'Alphasyllable'
+'Status'
+'Variant phoneme'
+'Written capitalized'
+'Irregular plural'
+'The actual word'
+'Phonetic transcription'
+'Edited phonetic transcription'
+'Stress pattern'};
