@@ -4,24 +4,34 @@ function [cursT colleg]= query_MRCDB(input_list)
 dbfile = './mrcDB/mrc2.db';
 conn = sqlite(dbfile);
 %%
-
+clc;
 colnames = { 'wid' 'nlet' 'nphon' 'nsyl' 'kf_freq' 'kf_ncats' 'kf_nsamp' 'tl_freq' 'brown_freq' 'fam' 'conc' 'imag' 'meanc' 'meanp' 'aoa' 'tq2' 'wtype' 'pdwtype' 'alphasyl' 'status' 'var' 'cap' 'irreg' 'word' 'phon' 'dphon' 'stress'};
+to_drop = [];
 for i = 1:length(input_list)
-input_word = input_list{i};
-
+input_word = upper(input_list{i});
+%input_word = 'BLUEBERRY'
 sqlquery_temp = 'SELECT * FROM word WHERE word = ''%s''';
 sqlquery = sprintf(sqlquery_temp,upper(input_word));
 rowlimit = 1000;
 curs = fetch(conn,sqlquery,rowlimit);
-
+%% Dashed word? tba
+%variations = arrayfun(@(l) [input_word(1:l) '-' input_word(l+1:end)],1:length(input_word)-1,'UniformOutput',0)';
+%%
+if isempty(curs)
+    
+disp(sprintf('word "%s" not found in MRC_DB',input_word))
+to_drop(end+1) = i;
+else
 cursI = cell2table(curs,'VariableNames',colnames);
 if i==1
     cursT = cursI;
 else
     cursT = [cursT;cursI];
-end
-end
+end % ends if first
+end % ends isempty
 
+end % ends loop
+input_list(to_drop) = [];
 cursT = cursT(strcmp(cursT.wtype,'N'),:) % only keep the nouns 
 
 % Validation, if words don't match, throw an error

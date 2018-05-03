@@ -107,10 +107,10 @@ median(sizes)
 close all;
 range_n_clusters = [4 8 15]; % cluster resolution
 % MAY CHANGE ACCORDING TO n_clusters
-min_cluster_size = 1; %
+min_cluster_size = 20; %
 range_max_cluster_size = [60,20,10 ];% [80 25 10 5]; % AKA minItems
 % SET TO 1000 FOR ALL IF TERMINATE IF NO MORE SAMPLES GET REMOVED
-range_n_iterations = [20 20 50  ]*2;%linspace(1000,1000,length(range_n_clusters));% % AKA iterationsPerLevel
+range_n_iterations = [20 20 50  ];%linspace(1000,1000,length(range_n_clusters));% % AKA iterationsPerLevel
 
 showDeletedItems = 1; %IF PRINT THE DETAILS OR NOT
 clear loopDMs loopRemainedTargWords copScores silScores

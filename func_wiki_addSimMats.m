@@ -57,3 +57,20 @@ figure(w_mat);
 title({ttls{w_mat} ['n-clust ' num2str(n_clust) ', n-items ' num2str(length(mats{w_mat})) ', thresh ' num2str(thresh(w_mat))]},'fontsize',20)
 end
 toc
+
+
+
+%%
+
+
+cmat = corr(d.dm');
+lbls = d.words;
+newVec = 1- get_triu((cmat));
+Z = linkage(newVec,'ward');
+[Z_atlas distmat] = get_Z_atlas(Z);
+ord = optimalleaforder(Z,newVec)
+
+ocmat = distmat(ord,ord);
+olbls = lbls(ord);
+
+add_numbers_to_mat(ocmat,olbls,'nonum')
